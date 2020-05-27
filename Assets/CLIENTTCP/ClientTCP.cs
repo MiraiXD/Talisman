@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using System;
 using Bindings;
-
+using Newtonsoft.Json;
 public class ClientTCP : MonoBehaviour
 {
     public string IP_Adress;
@@ -20,6 +20,7 @@ public class ClientTCP : MonoBehaviour
         Debug.Log("Connecting to server...");
         t = DateTime.Now;
         _clientSocket.BeginConnect(IP_Adress, port, new AsyncCallback(ConnectCallback), _clientSocket);
+        DontDestroyOnLoad(this.gameObject);
     }
     private void ConnectCallback(IAsyncResult ar)
     {
@@ -81,17 +82,43 @@ public class ClientTCP : MonoBehaviour
     }
     public static void RequestRoomsList()
     {
+        //PacketBuffer buffer = new PacketBuffer();
+        //buffer.WriteInteger((int)ClientPackets.CRequestRoomsList);
+        //SendData(buffer.ToArray());
+        //buffer.Dispose();
+        SendString(ClientPackets.CRequestRoomsList);
+    }
+    public static void CreateRoom(Request.CreateRoom request)
+    {
+        SendString(ClientPackets.CCreateRoom, JsonConvert.SerializeObject(request));
+    }
+    public static void SendString(ClientPackets packetID, string msg = null)
+    {
         PacketBuffer buffer = new PacketBuffer();
-        buffer.WriteInteger((int)ClientPackets.CRequestRoomsList);
+        buffer.WriteInteger((int)packetID);
+        if(msg != null)
+            buffer.WriteString(msg);
+
         SendData(buffer.ToArray());
         buffer.Dispose();
+    } 
+    public static string GetString(byte[] data)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteBytes(data);
+        buffer.ReadInteger();
+        string msg = buffer.ReadString();
+        buffer.Dispose();
+        return msg;
     }
-    //public static void ThankYouServer()
-    //{
-    //    PacketBuffer buffer = new PacketBuffer();
-    //    buffer.WriteInteger((int)ClientPackets.CThankYou);
-    //    buffer.WriteString("Zajebisty serwer xD");
-    //    SendData(buffer.ToArray());
-    //    buffer.Dispose();
-    //}
+    public static T GetData<T>(byte[] data)
+    {
+        string msg = GetString(data);
+        T obj = default;
+        try
+        {
+            obj = JsonConvert.DeserializeObject<T>(msg);
+        }catch(Exception e) { Debug.LogException(e); }
+        return obj;
+    }
 }

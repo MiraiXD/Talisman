@@ -25,12 +25,15 @@ class ClientHandleNetworkData : MonoBehaviour
 
     private static void HandleRoomsList(byte[] data)
     {
-        PacketBuffer receivedBuffer = new PacketBuffer();
-        receivedBuffer.WriteBytes(data);
-        receivedBuffer.ReadInteger();
-        string msg = receivedBuffer.ReadString();
-        receivedBuffer.Dispose();
-        Debug.Log(msg);
+        //PacketBuffer receivedBuffer = new PacketBuffer();
+        //receivedBuffer.WriteBytes(data);
+        //receivedBuffer.ReadInteger();
+        //string msg = receivedBuffer.ReadString();
+        List<GameRoom> gameRooms = ClientTCP.GetData<List<GameRoom>>(data);        
+        foreach(var room in gameRooms)
+        {
+            print(room.id + ", " + room.name);
+        }
     }
 
     public static void HandleNetworkInformation(byte[] data)
@@ -47,12 +50,12 @@ class ClientHandleNetworkData : MonoBehaviour
 
     private static void HandleConnectionOK(byte[] data)
     {
-        PacketBuffer buffer = new PacketBuffer();
-        buffer.WriteBytes(data);
-        buffer.ReadInteger();
-        string msg = buffer.ReadString();
-        buffer.Dispose();
-
+        //PacketBuffer buffer = new PacketBuffer();
+        //buffer.WriteBytes(data);
+        //buffer.ReadInteger();
+        //string msg = buffer.ReadString();
+        //buffer.Dispose();
+        string msg = ClientTCP.GetString(data);
         // ADD YOUR CODE YOU WANT TO EXEC HERE
         Debug.Log("time: " + (System.DateTime.Now - ClientTCP.t).TotalSeconds.ToString());
         Debug.Log(msg);
