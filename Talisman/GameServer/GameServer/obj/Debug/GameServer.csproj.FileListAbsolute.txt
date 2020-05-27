@@ -1,7 +1,0 @@
-C:\Users\Lil K\source\repos\GameServer\GameServer\obj\Debug\GameServer.csprojAssemblyReference.cache
-C:\Users\Lil K\source\repos\GameServer\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
-C:\Users\Lil K\source\repos\GameServer\GameServer\bin\Debug\GameServer.exe.config
-C:\Users\Lil K\source\repos\GameServer\GameServer\bin\Debug\GameServer.exe
-C:\Users\Lil K\source\repos\GameServer\GameServer\bin\Debug\GameServer.pdb
-C:\Users\Lil K\source\repos\GameServer\GameServer\obj\Debug\GameServer.exe
-C:\Users\Lil K\source\repos\GameServer\GameServer\obj\Debug\GameServer.pdb
