@@ -8,6 +8,9 @@ class ClientHandleNetworkData : MonoBehaviour
 {
     private delegate void Packet_(byte[] data);
     private static Dictionary<int, Packet_> packets;
+    
+    public static Action<ServerPackets> onServerRespond_0;
+    public static Action<ServerPackets, object> onServerRespond_1;
     private void Awake()
     {
         InitializeNetworkPackages();
@@ -24,16 +27,14 @@ class ClientHandleNetworkData : MonoBehaviour
     }
 
     private static void HandleRoomsList(byte[] data)
-    {
-        //PacketBuffer receivedBuffer = new PacketBuffer();
-        //receivedBuffer.WriteBytes(data);
-        //receivedBuffer.ReadInteger();
-        //string msg = receivedBuffer.ReadString();
-        List<GameRoom> gameRooms = ClientTCP.GetData<List<GameRoom>>(data);        
-        foreach(var room in gameRooms)
+    {        
+        List<GameRoom> gameRooms = ClientTCP.GetData<List<GameRoom>>(data);
+        ThreadSynchronizer.SyncTask(() => 
         {
-            print(room.id + ", " + room.name);
-        }
+            onServerRespond_1?.Invoke(ServerPackets.SReplyRoomsList, gameRooms);
+
+        });
+        
     }
 
     public static void HandleNetworkInformation(byte[] data)
