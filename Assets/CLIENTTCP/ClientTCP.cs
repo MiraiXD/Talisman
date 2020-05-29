@@ -88,9 +88,13 @@ public class ClientTCP : MonoBehaviour
         //buffer.Dispose();
         SendString(ClientPackets.CRequestRoomsList);
     }
-    public static void CreateRoom(Request.CreateRoom request)
+    public static void CreateRoom(ClientRequests.CreateRoom request)
     {
         SendString(ClientPackets.CCreateRoom, JsonConvert.SerializeObject(request));
+    }
+    public static void JoinRoom(ClientRequests.JoinRoom request)
+    {
+        SendString(ClientPackets.CJoinRoom, JsonConvert.SerializeObject(request));
     }
     public static void SendString(ClientPackets packetID, string msg = null)
     {
@@ -102,6 +106,15 @@ public class ClientTCP : MonoBehaviour
         SendData(buffer.ToArray());
         buffer.Dispose();
     } 
+    public static string GetString(byte[] data, out ServerPackets packetID)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteBytes(data);
+        packetID = (ServerPackets) buffer.ReadInteger();
+        string msg = buffer.ReadString();
+        buffer.Dispose();
+        return msg;
+    }
     public static string GetString(byte[] data)
     {
         PacketBuffer buffer = new PacketBuffer();
@@ -110,6 +123,17 @@ public class ClientTCP : MonoBehaviour
         string msg = buffer.ReadString();
         buffer.Dispose();
         return msg;
+    }
+    public static T GetData<T>(byte[] data, out ServerPackets packetID)
+    {
+        string msg = GetString(data, out packetID);
+        T obj = default;
+        try
+        {
+            obj = JsonConvert.DeserializeObject<T>(msg);
+        }
+        catch (Exception e) { Debug.LogException(e); }
+        return obj;
     }
     public static T GetData<T>(byte[] data)
     {

@@ -11,6 +11,7 @@ class ClientHandleNetworkData : MonoBehaviour
     
     public static Action<ServerPackets> onServerRespond_0;
     public static Action<ServerPackets, object> onServerRespond_1;
+    public static Action<ServerPackets, ServerResponds.RequestResult> onServerRespond_2;
     private void Awake()
     {
         InitializeNetworkPackages();
@@ -22,8 +23,16 @@ class ClientHandleNetworkData : MonoBehaviour
         packets = new Dictionary<int, Packet_>()
             {
                 { (int)ServerPackets.SConnectionOK, HandleConnectionOK},
-            { (int)ServerPackets.SReplyRoomsList, HandleRoomsList}
+            { (int)ServerPackets.SReplyRoomsList, HandleRoomsList},
+            { (int)ServerPackets.SRequestResult, HandleRequestResult},
             };
+    }
+
+    private static void HandleRequestResult(byte[] data)
+    {
+        ServerResponds.RequestResult result = ClientTCP.GetData<ServerResponds.RequestResult>(data, out ServerPackets packetID);
+        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(packetID, result); });
+        
     }
 
     private static void HandleRoomsList(byte[] data)

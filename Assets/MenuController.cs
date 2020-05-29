@@ -8,6 +8,7 @@ public class MenuController : MonoBehaviour
 {
     private Button playButton, exitButton;
     public GameObject mainMenu, rooms;
+    public TMPro.TMP_InputField playerNameInputField;
 
     // Start is called before the first frame update
     void Start()
