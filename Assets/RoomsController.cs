@@ -37,7 +37,7 @@ public class RoomsController : MonoBehaviour
                 else
                 {
                     ClientHandleNetworkData.onServerRespond_1 += JoinRoomResult;
-                    ClientTCP.JoinRoom(new ClientRequests.JoinRoom(room, menuController.playerNameInputField.text));                    
+                    ClientTCP.JoinRoom(new ClientRequests.JoinRoom(room, menuController.playerNameInputField.text));
                 }
             });
         }
@@ -46,21 +46,16 @@ public class RoomsController : MonoBehaviour
     private void JoinRoomResult(ServerPackets packetID, object result)
     {
         if (packetID != ServerPackets.SRequestResult) return;
-
+        ServerResponds.RequestResult<ClientRequests.JoinRoom> requestResult;
         try
         {
-            print("T " + result.GetType().ToString());
-            //ServerResponds.RequestResult requestResult = (ServerResponds.RequestResult)result;
-            ServerResponds.RequestResult<ClientRequests.JoinRoom> requestResult = (ServerResponds.RequestResult<ClientRequests.JoinRoom>)result;
-            Debug.Log((requestResult.obj == null).ToString() + ", " + requestResult.obj.GetType().ToString());
-            GameRoom room = (GameRoom)requestResult.obj;
-            Debug.Log("Success: " + requestResult.success + ", m: " + requestResult.message);
-            foreach (Player player in room.players)
-                Debug.Log(player.name);
-
-            ClientHandleNetworkData.onServerRespond_1 -= JoinRoomResult;
+            requestResult = (ServerResponds.RequestResult<ClientRequests.JoinRoom>)result;
         }
-        catch { return; } // exception possible by casting to adequate RequestResult
-        
+        catch { return; }
+
+        GameRoom room = (GameRoom)requestResult.obj;
+        print(room.players[0].name);
+
+        ClientHandleNetworkData.onServerRespond_1 -= JoinRoomResult;
     }
 }

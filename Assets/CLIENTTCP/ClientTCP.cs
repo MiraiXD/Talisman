@@ -13,13 +13,13 @@ public class ClientTCP : MonoBehaviour
 
     public static Socket _clientSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
     private byte[] _asyncBuffer = new byte[1024];
-    public static DateTime t;
+    private static JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All};
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Connecting to server...");
-        t = DateTime.Now;
+        Debug.Log("Connecting to server...");        
         _clientSocket.BeginConnect(IP_Adress, port, new AsyncCallback(ConnectCallback), _clientSocket);
+        
         DontDestroyOnLoad(this.gameObject);
     }
     private void ConnectCallback(IAsyncResult ar)
@@ -89,12 +89,12 @@ public class ClientTCP : MonoBehaviour
         SendString(ClientPackets.CRequestRoomsList);
     }
     public static void CreateRoom(ClientRequests.CreateRoom request)
-    {
-        SendString(ClientPackets.CCreateRoom, JsonConvert.SerializeObject(request));
+    {        
+        SendString(ClientPackets.CCreateRoom, JsonConvert.SerializeObject(request, settings));
     }
     public static void JoinRoom(ClientRequests.JoinRoom request)
-    {
-        SendString(ClientPackets.CJoinRoom, JsonConvert.SerializeObject(request));
+    {        
+        SendString(ClientPackets.CJoinRoom, JsonConvert.SerializeObject(request, settings));
     }
     public static void SendString(ClientPackets packetID, string msg = null)
     {
@@ -126,13 +126,13 @@ public class ClientTCP : MonoBehaviour
     }
     public static T GetData<T>(byte[] data, out ServerPackets packetID)
     {
-        string msg = GetString(data, out packetID);
+        string msg = GetString(data, out packetID);        
         T obj = default;
         try
         {
-            obj = JsonConvert.DeserializeObject<T>(msg);
+            obj = JsonConvert.DeserializeObject<T>(msg, settings);
         }
-        catch (Exception e) { Debug.LogException(e); }
+        catch (Exception e) { ThreadSynchronizer.SyncTask(() => { Debug.LogException(e); }); }
         return obj;
     }
     public static T GetData<T>(byte[] data)
@@ -141,8 +141,10 @@ public class ClientTCP : MonoBehaviour
         T obj = default;
         try
         {
-            obj = JsonConvert.DeserializeObject<T>(msg);
-        }catch(Exception e) { Debug.LogException(e); }
+            JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+            obj = JsonConvert.DeserializeObject<T>(msg, settings);
+        }
+        catch (Exception e) { ThreadSynchronizer.SyncTask(() => { Debug.LogException(e); }); }
         return obj;
     }
 }

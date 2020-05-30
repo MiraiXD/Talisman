@@ -10,8 +10,7 @@ class ClientHandleNetworkData : MonoBehaviour
     private static Dictionary<int, Packet_> packets;
     
     public static Action<ServerPackets> onServerRespond_0;
-    public static Action<ServerPackets, object> onServerRespond_1;
-    public static Action<ServerPackets, ServerResponds.RequestResult> onServerRespond_2;
+    public static Action<ServerPackets, object> onServerRespond_1;    
     private void Awake()
     {
         InitializeNetworkPackages();
@@ -30,8 +29,9 @@ class ClientHandleNetworkData : MonoBehaviour
 
     private static void HandleRequestResult(byte[] data)
     {
-        ServerResponds.RequestResult result = ClientTCP.GetData<ServerResponds.RequestResult>(data, out ServerPackets packetID);
-        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(packetID, result); });
+        ServerResponds.RequestResult result = ClientTCP.GetData<ServerResponds.RequestResult>(data);//, out ServerPackets packetID);
+        //what type is room
+        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SRequestResult, result); });
         
     }
 
@@ -67,7 +67,7 @@ class ClientHandleNetworkData : MonoBehaviour
         //buffer.Dispose();
         string msg = ClientTCP.GetString(data);
         // ADD YOUR CODE YOU WANT TO EXEC HERE
-        Debug.Log("time: " + (System.DateTime.Now - ClientTCP.t).TotalSeconds.ToString());
+        //Debug.Log("time: " + (System.DateTime.Now - ClientTCP.t).TotalSeconds.ToString());
         Debug.Log(msg);
 
         ClientTCP.RequestRoomsList();
