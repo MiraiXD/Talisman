@@ -1,5 +1,5 @@
 ﻿
-using Bindings;
+using ComNet;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +8,9 @@ class ClientHandleNetworkData : MonoBehaviour
 {
     private delegate void Packet_(byte[] data);
     private static Dictionary<int, Packet_> packets;
-    
+
     public static Action<ServerPackets> onServerRespond_0;
-    public static Action<ServerPackets, object> onServerRespond_1;    
+    public static Action<ServerPackets, object> onServerRespond_1;
     private void Awake()
     {
         InitializeNetworkPackages();
@@ -22,29 +22,35 @@ class ClientHandleNetworkData : MonoBehaviour
         packets = new Dictionary<int, Packet_>()
             {
                 { (int)ServerPackets.SConnectionOK, HandleConnectionOK},
-            { (int)ServerPackets.SReplyRoomsList, HandleRoomsList},
+            //{ (int)ServerPackets.SReplyRoomsList, HandleRoomsList},
             { (int)ServerPackets.SRequestResult, HandleRequestResult},
+            { (int)ServerPackets.SCharacterAssignment, HandleCharacterAssignment},
             };
+    }
+
+    private static void HandleCharacterAssignment(byte[] data)
+    {
+        ComNet.CharacterInfo info = ClientTCP.GetData<ComNet.CharacterInfo>(data);
+        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, info); });
     }
 
     private static void HandleRequestResult(byte[] data)
     {
-        ServerResponds.RequestResult result = ClientTCP.GetData<ServerResponds.RequestResult>(data);//, out ServerPackets packetID);
-        //what type is room
+        ServerResponds.RequestResult result = ClientTCP.GetData<ServerResponds.RequestResult>(data);//, out ServerPackets packetID);        
         ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SRequestResult, result); });
-        
+
     }
 
-    private static void HandleRoomsList(byte[] data)
-    {        
-        List<GameRoom> gameRooms = ClientTCP.GetData<List<GameRoom>>(data);
-        ThreadSynchronizer.SyncTask(() => 
-        {
-            onServerRespond_1?.Invoke(ServerPackets.SReplyRoomsList, gameRooms);
+    //private static void HandleRoomsList(byte[] data)
+    //{        
+    //    List<GameRoom> gameRooms = ClientTCP.GetData<List<GameRoom>>(data);
+    //    ThreadSynchronizer.SyncTask(() => 
+    //    {
+    //        onServerRespond_1?.Invoke(ServerPackets.SReplyRoomsList, gameRooms);
 
-        });
-        
-    }
+    //    });
+
+    //}
 
     public static void HandleNetworkInformation(byte[] data)
     {
@@ -60,17 +66,14 @@ class ClientHandleNetworkData : MonoBehaviour
 
     private static void HandleConnectionOK(byte[] data)
     {
-        //PacketBuffer buffer = new PacketBuffer();
-        //buffer.WriteBytes(data);
-        //buffer.ReadInteger();
-        //string msg = buffer.ReadString();
-        //buffer.Dispose();
         string msg = ClientTCP.GetString(data);
-        // ADD YOUR CODE YOU WANT TO EXEC HERE
-        //Debug.Log("time: " + (System.DateTime.Now - ClientTCP.t).TotalSeconds.ToString());
         Debug.Log(msg);
+        //ClientTCP.RequestRoomsList();
+        RequestRoomsList();
+    }
 
-        ClientTCP.RequestRoomsList();
-        //ClientTCP.ThankYouServer();
+    public static void RequestRoomsList()
+    {
+        ClientTCP.SendObject(ClientPackets.CRequestRoomsList, new ClientRequests.RoomsList());
     }
 }

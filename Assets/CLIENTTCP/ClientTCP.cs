@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Net.Sockets;
 using System.Net;
 using System;
-using Bindings;
+using ComNet;
 using Newtonsoft.Json;
 public class ClientTCP : MonoBehaviour
 {
@@ -80,21 +80,21 @@ public class ClientTCP : MonoBehaviour
     {
         _clientSocket.Send(data);
     }
-    public static void RequestRoomsList()
+    //public static void RequestRoomsList()
+    //{       
+    //    SendString(ClientPackets.CRequestRoomsList);
+    //}
+    //public static void CreateRoom(ClientRequests.CreateRoom request)
+    //{        
+    //    SendString(ClientPackets.CCreateRoom, JsonConvert.SerializeObject(request, settings));
+    //}
+    //public static void JoinRoom(ClientRequests.JoinRoom request)
+    //{        
+    //    SendString(ClientPackets.CJoinRoom, JsonConvert.SerializeObject(request, settings));
+    //}
+    public static void SendObject(ClientPackets packetID, object obj = null)
     {
-        //PacketBuffer buffer = new PacketBuffer();
-        //buffer.WriteInteger((int)ClientPackets.CRequestRoomsList);
-        //SendData(buffer.ToArray());
-        //buffer.Dispose();
-        SendString(ClientPackets.CRequestRoomsList);
-    }
-    public static void CreateRoom(ClientRequests.CreateRoom request)
-    {        
-        SendString(ClientPackets.CCreateRoom, JsonConvert.SerializeObject(request, settings));
-    }
-    public static void JoinRoom(ClientRequests.JoinRoom request)
-    {        
-        SendString(ClientPackets.CJoinRoom, JsonConvert.SerializeObject(request, settings));
+        SendString(packetID, JsonConvert.SerializeObject(obj, settings));
     }
     public static void SendString(ClientPackets packetID, string msg = null)
     {

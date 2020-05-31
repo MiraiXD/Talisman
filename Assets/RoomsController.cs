@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Bindings;
+using ComNet;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.UI;
@@ -14,31 +14,36 @@ public class RoomsController : MonoBehaviour
 
     private void OnEnable()
     {
-        ClientHandleNetworkData.onServerRespond_1 += OnRoomsListArrived;
-        ClientTCP.RequestRoomsList();
+        ClientHandleNetworkData.onServerRespond_1 += RoomsListResult;
+        //ClientTCP.RequestRoomsList();
+        ClientHandleNetworkData.RequestRoomsList();
         menuController = FindObjectOfType<MenuController>();
     }
-
-    private void OnRoomsListArrived(ServerPackets packetID, object obj)
+    private void OnDisable()
     {
-        if (packetID != ServerPackets.SReplyRoomsList) return;
+        ClientHandleNetworkData.onServerRespond_1 -= RoomsListResult;
+    }
+    private void RoomsListResult(ServerPackets packetID, object result)
+    {
+        if (packetID != ServerPackets.SRequestResult) return;
+        ServerResponds.RequestResult<ClientRequests.RoomsList> requestResult;
+        try
+        {
+            requestResult = (ServerResponds.RequestResult<ClientRequests.RoomsList>)result;
+        }
+        catch { return; }
 
-        List<GameRoom> gameRooms = (List<GameRoom>)obj;
-        foreach (GameRoom room in gameRooms)
+        List<GameRoomInfo> gameRoomInfos = (List<GameRoomInfo>)requestResult.obj;
+        foreach (GameRoomInfo info in gameRoomInfos)
         {
             var r = Instantiate(roomPrefab, roomsContent);
             Text[] texts = r.GetComponentsInChildren<Text>();
-            texts[0].text = room.name;
-            texts[1].text = room.players.Count + "/" + room.maxPlayers;
+            texts[0].text = info.name;
+            texts[1].text = info.clientInfos.Count + "/" + info.maxPlayers;
             r.GetComponent<Button>().onClick.AddListener(() =>
-            {
-                if (string.IsNullOrWhiteSpace(menuController.playerNameInputField.text))
-                    Debug.LogError("error, puste! Imię");
-                else
-                {
+            {               
                     ClientHandleNetworkData.onServerRespond_1 += JoinRoomResult;
-                    ClientTCP.JoinRoom(new ClientRequests.JoinRoom(room, menuController.playerNameInputField.text));
-                }
+                    ClientTCP.SendObject(ClientPackets.CJoinRoom, new ClientRequests.JoinRoom(info));                
             });
         }
     }
@@ -53,9 +58,11 @@ public class RoomsController : MonoBehaviour
         }
         catch { return; }
 
-        GameRoom room = (GameRoom)requestResult.obj;
-        print(room.players[0].name);
+        GameRoomInfo info = (GameRoomInfo)requestResult.obj;      
 
         ClientHandleNetworkData.onServerRespond_1 -= JoinRoomResult;
+
+        if (requestResult.success) { UnityEngine.SceneManagement.SceneManager.LoadScene("Game"); }
+
     }
 }
