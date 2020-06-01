@@ -22,11 +22,8 @@ public class PlayerController : MonoBehaviour
             characterInfo = (ComNet.CharacterInfo)info;
         }catch { return; }
 
-        show info about character
-    }
+        ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
 
-    void Update()
-    {
-        
+        Debug.Log(characterInfo.character);
     }
 }

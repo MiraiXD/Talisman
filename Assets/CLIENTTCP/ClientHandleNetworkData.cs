@@ -69,7 +69,7 @@ class ClientHandleNetworkData : MonoBehaviour
         string msg = ClientTCP.GetString(data);
         Debug.Log(msg);
         //ClientTCP.RequestRoomsList();
-        RequestRoomsList();
+        //RequestRoomsList();
     }
 
     public static void RequestRoomsList()

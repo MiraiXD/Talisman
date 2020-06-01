@@ -33,7 +33,7 @@ public class RoomsController : MonoBehaviour
         }
         catch { return; }
 
-        List<GameRoomInfo> gameRoomInfos = (List<GameRoomInfo>)requestResult.obj;
+        GameRoomInfo[] gameRoomInfos = (GameRoomInfo[])requestResult.obj;
         foreach (GameRoomInfo info in gameRoomInfos)
         {
             var r = Instantiate(roomPrefab, roomsContent);
