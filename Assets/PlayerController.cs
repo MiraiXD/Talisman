@@ -24,6 +24,6 @@ public class PlayerController : MonoBehaviour
 
         ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
 
-        Debug.Log(characterInfo.character);
+        GameUIController.ShowCharacterCard(characterInfo);
     }
 }
