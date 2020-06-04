@@ -5,17 +5,21 @@ using UnityEngine;
 public class GameUIController : MonoBehaviour
 {
     //private CharacterSelectionController _characterSelectionController;
-    private static CharacterSelectionController characterSelectionController;
-
+    //private static CharacterUIController characterSelectionController;    
     private void Start()
     {
-        characterSelectionController = GetComponentInChildren<CharacterSelectionController>();
+        //characterSelectionController = GetComponentInChildren<CharacterUIController>();
     }
 
-    public static void ShowCharacterCard(ComNet.CharacterInfo characterInfo)
-    {
-        characterSelectionController.gameObject.SetActive(true);
-        characterSelectionController.ShowCard(characterInfo);
+    //public static void ShowCharacterCard(ComNet.CharacterInfo characterInfo)
+    //{
+    //    //characterSelectionController.gameObject.SetActive(true);
+    //    CharacterUIController.ShowCard(characterInfo);        
+    //    CharacterUIController.okButton.onClick.AddListener(() =>
+    //   {
+    //       CharacterUIController.HideActiveCard();
+    //       //CharacterSelectionController.gameObject.SetActive(false);
+    //   });
 
-    }
+    //}
 }

@@ -24,6 +24,19 @@ public class PlayerController : MonoBehaviour
 
         ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
 
-        GameUIController.ShowCharacterCard(characterInfo);
+        //show the player the character he's been given
+        CharacterUIController.ShowCard(characterInfo);
+
+        //CharacterUIController.onCardShownOrHidden += OnCardHidden;
+        //GameUIController.ShowCharacterCard(characterInfo);
+
+        //spawn players' models on the board
+    }
+
+    private void OnCardHidden(bool cardShown)
+    {
+        if (cardShown) return;
+
+
     }
 }
