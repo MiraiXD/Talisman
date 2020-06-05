@@ -4,18 +4,24 @@ using UnityEngine;
 
 public class CharacterModel : MonoBehaviour
 {
-    private int mapTileMask = LayerMask.GetMask("MapTile");
-    public void PositionOnMapTile()
+    private int mapTileMask;
+    public Vector3 GetPositionOnMapTile()
     {
         Vector3 origin = transform.position + Vector3.up * 5f;
         Vector3 direction = Vector3.down;
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, 10f, mapTileMask)
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, 10f, mapTileMask))
         {
-            transform.position = hit.point;
-        }        
+            return hit.point;
+        }
+        else return Vector3.zero;
+    }
+    public void MoveTo(PlayerSpot from, PlayerSpot to)
+    {
+
     }
     private void Start()
-    {        
-        PositionOnMapTile();
+    {
+        //PositionOnMapTile();
+        mapTileMask = LayerMask.GetMask("MapTile");
     }
 }

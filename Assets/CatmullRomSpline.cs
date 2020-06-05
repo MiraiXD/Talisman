@@ -6,6 +6,23 @@ public class CatmullRomSpline : MonoBehaviour
     private List<Vector3> splinePoints;
     private bool isLooping;
     public static int n_Points = 5;
+
+    private void Start()
+    {
+        Create();
+    }
+    private void OnDrawGizmosSelected()
+    {
+        foreach (CatmullRomControlPoint controlPoint in controlPoints) Gizmos.DrawSphere(controlPoint.transform.position, .2f);
+        if (splinePoints != null)
+        {
+            Debug.Log(splinePoints.Count);
+            for (int i = 0; i < splinePoints.Count - 1; i++)
+            {
+                Gizmos.DrawLine(splinePoints[i], splinePoints[i + 1]);
+            }
+        }
+    }
     public void Create()
     {
         splinePoints = new List<Vector3>();
@@ -46,12 +63,12 @@ public class CatmullRomSpline : MonoBehaviour
         Vector3 d = -p0 + 3f * p1 - 3f * p2 + p3;
 
         Vector3[] points = new Vector3[n_Points];
-        float resolution = 1f / n_Points;
-        for (int i = 1; i <= n_Points; i++)
+        float resolution = 1f / (n_Points-1);
+        for (int i = 0; i < n_Points; i++)
         {
             float x = i * resolution;
             //The cubic polynomial: a + b * t + c * t^2 + d * t^3
-            points[i-1] = 0.5f * (a + (b * x) + (c * x * x) + (d * x * x * x));
+            points[i] = 0.5f * (a + (b * x) + (c * x * x) + (d * x * x * x));
         }
 
         return points;
