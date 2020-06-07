@@ -23,17 +23,17 @@ public class RoomsController : MonoBehaviour
     {
         ClientHandleNetworkData.onServerRespond_1 -= RoomsListResult;
     }
-    private void RoomsListResult(ServerPackets packetID, object result)
+    private void RoomsListResult(ServerPackets packetID, object obj)
     {
         if (packetID != ServerPackets.SRequestResult) return;
-        ServerResponds.RequestResult<ClientRequests.RoomsList> requestResult;
+        ServerResponds.RequestResult<ServerResponds.RoomsListResult> requestResult;
         try
         {
-            requestResult = (ServerResponds.RequestResult<ClientRequests.RoomsList>)result;
+            requestResult = (ServerResponds.RequestResult<ServerResponds.RoomsListResult>)obj;
         }
         catch { return; }
-
-        GameRoomInfo[] gameRoomInfos = (GameRoomInfo[])requestResult.obj;
+        ServerResponds.RoomsListResult result = requestResult.result;
+        GameRoomInfo[] gameRoomInfos = result.rooms;
         foreach (GameRoomInfo info in gameRoomInfos)
         {
             var r = Instantiate(roomPrefab, roomsContent);
@@ -48,18 +48,19 @@ public class RoomsController : MonoBehaviour
         }
     }
 
-    private void JoinRoomResult(ServerPackets packetID, object result)
+    private void JoinRoomResult(ServerPackets packetID, object obj)
     {
         if (packetID != ServerPackets.SRequestResult) return;
-        ServerResponds.RequestResult<ClientRequests.JoinRoom> requestResult;
+        ServerResponds.RequestResult<ServerResponds.JoinRoomResult> requestResult;
         try
         {
-            requestResult = (ServerResponds.RequestResult<ClientRequests.JoinRoom>)result;
+            requestResult = (ServerResponds.RequestResult<ServerResponds.JoinRoomResult>)obj;
         }
         catch { return; }
 
-        GameRoomInfo info = (GameRoomInfo)requestResult.obj;      
-
+        ServerResponds.JoinRoomResult result = requestResult.result;
+        PlayerController.SetPlayerInfo(result.newPlayerInfo);
+        //display info about room
         ClientHandleNetworkData.onServerRespond_1 -= JoinRoomResult;
 
         if (requestResult.success) { UnityEngine.SceneManagement.SceneManager.LoadScene("Game"); }

@@ -16,7 +16,6 @@ public class CatmullRomSpline : MonoBehaviour
         foreach (CatmullRomControlPoint controlPoint in controlPoints) Gizmos.DrawSphere(controlPoint.transform.position, .2f);
         if (splinePoints != null)
         {
-            Debug.Log(splinePoints.Count);
             for (int i = 0; i < splinePoints.Count - 1; i++)
             {
                 Gizmos.DrawLine(splinePoints[i], splinePoints[i + 1]);

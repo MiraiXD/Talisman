@@ -5,15 +5,27 @@ using ComNet;
 using System;
 
 public class PlayerController : MonoBehaviour
-{    
-
+{
+    public static PlayerInfo playerInfo;
     void Start()
+    {        
+        Map.CreateMap();
+        if (playerInfo.isAdmin)
+        {
+            ClientTCP.SendObject(ClientPackets.CAdminMapInfo, Map.mapInfo);
+        }
+    }
+    public static void SetPlayerInfo(PlayerInfo info)
+    {
+        playerInfo = info;
+        
+    }
+    public static void GameReady()
     {
         ClientHandleNetworkData.onServerRespond_1 += CharacterAssignment;
         ClientTCP.SendObject(ClientPackets.CGameReady);
     }
-
-    private void CharacterAssignment(ServerPackets packetID, object info)
+    private static void CharacterAssignment(ServerPackets packetID, object info)
     {
         if (packetID != ServerPackets.SCharacterAssignment) return;
         ComNet.CharacterInfo characterInfo;
@@ -26,16 +38,16 @@ public class PlayerController : MonoBehaviour
 
         //show the player the character he's been given
         CharacterUIController.ShowCard(characterInfo);
-
+        CharacterUIController.onOKPressed += OnCharacterAccepted;
         //CharacterUIController.onCardShownOrHidden += OnCardHidden;
         //GameUIController.ShowCharacterCard(characterInfo);
 
         //spawn players' models on the board
     }
 
-    private void OnCardHidden(bool cardShown)
+    private static void OnCharacterAccepted()
     {
-        if (cardShown) return;
+       
 
 
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharacterModel : MonoBehaviour
 {
+    public ComNet.CharacterInfo.Characters character;
     private int mapTileMask;
     public Vector3 GetPositionOnMapTile()
     {
