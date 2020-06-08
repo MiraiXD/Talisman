@@ -29,6 +29,7 @@ public class CharacterModelController : MonoBehaviour, ISerializationCallbackRec
                 if (spot == null) { Debug.LogError("Could not find a spot!"); return null; }
 
                 CharacterModel newModel = Instantiate(model, parent.transform);
+                newModel.Init();
                 newModel.transform.position = CharacterModel.GetPositionOnMapTile(spot.transform.position);
                 return newModel;
             }

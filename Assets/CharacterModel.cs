@@ -20,7 +20,7 @@ public class CharacterModel : MonoBehaviour
     {
 
     }
-    private void Start()
+    public void Init()
     {
         //PositionOnMapTile();
         mapTileMask = LayerMask.GetMask("MapTile");

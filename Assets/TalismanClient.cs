@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ComNet;
+using System;
 
 public class TalismanClient : MonoBehaviour
 {
@@ -78,7 +79,15 @@ public class TalismanClient : MonoBehaviour
 
     private static void OnCharacterAccepted()
     {
+        CharacterUIController.onOKPressed -= OnCharacterAccepted;
 
+        //ClientHandleNetworkData.onServerRespond_1 += OnPlayerTurn;
+        ClientTCP.SendObject(ClientPackets.CCharacterAccepted);
+    }
+
+    public static void OnPlayerTurn(TalismanPlayerInfo playerInfo)
+    {
+        Debug.Log("Player " + playerInfo.inRoomID + " turn ");
 
 
     }

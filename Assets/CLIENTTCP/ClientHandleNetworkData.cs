@@ -26,7 +26,14 @@ class ClientHandleNetworkData : MonoBehaviour
             { (int)ServerPackets.SRequestResult, HandleRequestResult},
             { (int)ServerPackets.SMapInfo, HandleCheckMap},
             { (int)ServerPackets.SCharacterAssignment, HandleCharacterAssignment},
+            { (int)ServerPackets.PlayerTurn, HandlePlayerTurn},
             };
+    }
+
+    private static void HandlePlayerTurn(byte[] data)
+    {
+        TalismanPlayerInfo playerInfo = ClientTCP.GetData<TalismanPlayerInfo>(data);
+        ThreadSynchronizer.SyncTask(() => { TalismanClient.OnPlayerTurn(playerInfo); });
     }
 
     private static void HandleCheckMap(byte[] data)
