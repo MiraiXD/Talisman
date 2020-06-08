@@ -24,14 +24,21 @@ class ClientHandleNetworkData : MonoBehaviour
                 { (int)ServerPackets.SConnectionOK, HandleConnectionOK},
             //{ (int)ServerPackets.SReplyRoomsList, HandleRoomsList},
             { (int)ServerPackets.SRequestResult, HandleRequestResult},
+            { (int)ServerPackets.SMapInfo, HandleCheckMap},
             { (int)ServerPackets.SCharacterAssignment, HandleCharacterAssignment},
             };
     }
 
+    private static void HandleCheckMap(byte[] data)
+    {
+        MapInfo mapInfo=ClientTCP.GetData<MapInfo>( data);
+        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SMapInfo, mapInfo); });
+    }
+
     private static void HandleCharacterAssignment(byte[] data)
     {
-        ComNet.CharacterInfo info = ClientTCP.GetData<ComNet.CharacterInfo>(data);
-        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, info); });
+        TalismanPlayerInfo[] infos = ClientTCP.GetData<TalismanPlayerInfo[]>(data);
+        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, infos); });
     }
 
     private static void HandleRequestResult(byte[] data)

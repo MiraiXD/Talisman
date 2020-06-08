@@ -20,13 +20,14 @@ public class CharacterUIController : MonoBehaviour, ISerializationCallbackReceiv
             {
                 card.gameObject.SetActive(true);
                 //onCardShownOrHidden?.Invoke(true);
-
+                Debug.Log("jp2");
                 card.SetCharacterCard(characterInfo);
                 currentActiveCard = card;
-                okButton.onClick.AddListener(()=> { HideActiveCard(); onOKPressed?.Invoke(); });
+                okButton.onClick.AddListener(()=> { HideActiveCard(); onOKPressed?.Invoke(); onOKPressed = null; });
                 break;
             }
         }
+        Debug.Log("jp");
     }
     public static void HideActiveCard()
     {

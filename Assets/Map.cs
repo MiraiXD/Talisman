@@ -6,51 +6,51 @@ using System;
 public class Map : MonoBehaviour ,ISerializationCallbackReceiver
 {    
     private static MapTile[] tiles;
+    private static Dictionary<int, MapTile> mapTiles;
     public static MapInfo mapInfo;
 
     [SerializeField] private CatmullRomSpline _outerMapSpline;
     private static CatmullRomSpline outerMapSpline;
 
-    private void Start()
+    private void Awake()
     {
         tiles = GetComponentsInChildren<MapTile>();
     }
     public static void CreateMap()
-    {
+    {        
         MapTileInfo[] tileInfos = new MapTileInfo[tiles.Length];
+        mapTiles = new Dictionary<int, MapTile>();
         for (int i = 0; i < tiles.Length; i++)
         {
             tiles[i].tileInfo = new MapTileInfo(tiles[i].tileType);
             tileInfos[i] = tiles[i].tileInfo;
+
+            mapTiles.Add(tiles[i].tileInfo.id, tiles[i]);
         }
-        mapInfo = new MapInfo(tileInfos);
-        ClientHandleNetworkData.onServerRespond_1 += CheckMapInfo;
+        mapInfo = new MapInfo(tileInfos);        
     }
 
-    private static void CheckMapInfo(ServerPackets packetID, object obj)
+    public static MapTile GetNextTile(MapTileInfo startingTile, bool counterClockwiseDirection)
     {
-        if (packetID != ServerPackets.SMapInfo) return;
-        MapInfo serverMapInfo;
-        try
-        {
-            serverMapInfo = (MapInfo)obj;
-        }
-        catch { return; }
-
-        ClientHandleNetworkData.onServerRespond_1 -= CheckMapInfo;
-
-        if (mapInfo == null) Debug.LogError("MapInfo is null!");
-        if (mapInfo.CompareTo(serverMapInfo) != 0) Debug.LogError("Local map is different from the one received from server!");
-        else
-            PlayerController.GameReady();
+        int nextTileID = counterClockwiseDirection ? startingTile.id + 1 : startingTile.id - 1;
+        return mapTiles[nextTileID];
     }
 
-    public static MapTile GetTile(MapTileInfo.MapTiles tileType)
+    public static PlayerSpot GetSpot(MapTileInfo tileInfo)
     {
-        foreach(MapTile tile in tiles)
+        MapTileInfo currentTile = tileInfo;
+
+        PlayerSpot playerSpot = null;
+        for (int i = 0; i < 100; i++) // while loop crashes unity - stinks
         {
-            if (tile.tileType == tileType) return tile;
+            foreach (PlayerSpot spot in mapTiles[currentTile.id].playerSpots)
+            {
+                if (spot.occupied) continue;
+                else { playerSpot = spot; break; }
+            }
+            if (playerSpot != null) return playerSpot;            
         }
+        Debug.LogError("Could not find a spot!");
         return null;
     }
 

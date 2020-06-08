@@ -54,7 +54,7 @@ public class CatmullRomSpline : MonoBehaviour
             splinePoints.AddRange(GetSplineBetweenPoints(controlPoints[controlPoints.Length - 2].transform.position, controlPoints[controlPoints.Length - 1].transform.position, controlPoints[0].transform.position, controlPoints[1].transform.position));
         }
     }
-    public static Vector3[] GetSplineBetweenPoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+    private static Vector3[] GetSplineBetweenPoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
     {
         Vector3 a = 2f * p1;
         Vector3 b = p2 - p0;

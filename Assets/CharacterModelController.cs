@@ -1,21 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ComNet;
 
 public class CharacterModelController : MonoBehaviour, ISerializationCallbackReceiver
 {
     [SerializeField] private CharacterModel[] _allModels;
     private static CharacterModel[] allModels;
 
-    public static void SpawnModel(ComNet.CharacterInfo characterInfo)
+    public static CharacterModel SpawnModel(ComNet.CharacterInfo characterInfo)
     {
+        CharacterModelController parent = FindObjectOfType<CharacterModelController>();
+
         foreach(CharacterModel model in allModels)
         {
             if(model.character == characterInfo.character)
             {
-                MapTile tile = Map.GetTile(characterInfo.startingTile);
+                PlayerSpot spot = null;
+                MapTileInfo spawnTile = characterInfo.startingTile;
+                for (int i = 0; i < 100; i++) // while loop crashes unity
+                {
+                    spot = Map.GetSpot(spawnTile);
+                    if(spot == null) // find spot on an adjacent tile in counterclockwise direction
+                    {
+                        spawnTile = Map.GetNextTile(spawnTile, true).tileInfo;
+                    }
+                }
+                if (spot == null) { Debug.LogError("Could not find a spot!"); return null; }
+
+                CharacterModel newModel = Instantiate(model, parent.transform);
+                newModel.transform.position = CharacterModel.GetPositionOnMapTile(spot.transform.position);
+                return newModel;
             }
         }
+        Debug.LogError("No such model :< ");
+        return null;
     }
 
     public void OnAfterDeserialize()

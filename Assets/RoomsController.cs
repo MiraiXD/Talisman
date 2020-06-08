@@ -56,14 +56,17 @@ public class RoomsController : MonoBehaviour
         {
             requestResult = (ServerResponds.RequestResult<ServerResponds.JoinRoomResult>)obj;
         }
-        catch { return; }
+        catch { print("return"); return; }
+        try
+        {
+            ServerResponds.JoinRoomResult result = requestResult.result;
+            ClientTCP.playerInfo = result.newPlayerInfo;
+            //display info about room
+            ClientHandleNetworkData.onServerRespond_1 -= JoinRoomResult;
 
-        ServerResponds.JoinRoomResult result = requestResult.result;
-        PlayerController.SetPlayerInfo(result.newPlayerInfo);
-        //display info about room
-        ClientHandleNetworkData.onServerRespond_1 -= JoinRoomResult;
-
-        if (requestResult.success) { UnityEngine.SceneManagement.SceneManager.LoadScene("Game"); }
-
+            if (requestResult.success) { UnityEngine.SceneManagement.SceneManager.LoadScene("Game"); }
+            else { print("huj"); }
+        }
+        catch { print("huj2"); }
     }
 }

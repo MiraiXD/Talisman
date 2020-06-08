@@ -5,10 +5,10 @@ using UnityEngine;
 public class CharacterModel : MonoBehaviour
 {
     public ComNet.CharacterInfo.Characters character;
-    private int mapTileMask;
-    public Vector3 GetPositionOnMapTile()
+    private static int mapTileMask;
+    public static Vector3 GetPositionOnMapTile(Vector3 position)
     {
-        Vector3 origin = transform.position + Vector3.up * 5f;
+        Vector3 origin = position + Vector3.up * 5f;
         Vector3 direction = Vector3.down;
         if (Physics.Raycast(origin, direction, out RaycastHit hit, 10f, mapTileMask))
         {

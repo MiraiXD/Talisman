@@ -14,7 +14,7 @@ public class ClientTCP : MonoBehaviour
     public static Socket _clientSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
     private byte[] _asyncBuffer = new byte[1024];
     private static JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All};
-    // Start is called before the first frame update
+    public static PlayerInfo playerInfo;
     void Start()
     {
         Debug.Log("Connecting to server...");        
