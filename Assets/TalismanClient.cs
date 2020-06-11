@@ -91,4 +91,8 @@ public class TalismanClient : MonoBehaviour
 
 
     }
+    public static void Roll()
+    {
+
+    }
 }
