@@ -7,7 +7,7 @@ public class TalismanClient : MonoBehaviour
     public static TalismanPlayerInfo playerInfo;
     void Start()
     {
-        if(ClientTCP.playerInfo == null) { Debug.LogError("PLayerInfo uninitialized!"); return; }
+        if (ClientTCP.playerInfo == null) { Debug.LogError("PLayerInfo uninitialized!"); return; }
 
         Map.CreateMap();
         ClientHandleNetworkData.onServerRespond_1 += CheckMapInfo;
@@ -49,14 +49,14 @@ public class TalismanClient : MonoBehaviour
         TalismanPlayerInfo[] playerInfos;
         try
         {
-            playerInfos= (TalismanPlayerInfo[])obj;
+            playerInfos = (TalismanPlayerInfo[])obj;
         }
         catch { return; }
 
         ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
 
-        
-        foreach(TalismanPlayerInfo info in playerInfos)
+
+        foreach (TalismanPlayerInfo info in playerInfos)
         {
             CharacterModel model = CharacterModelController.SpawnModel(info.characterInfo);
             model.GetComponent<PlayerController>().playerInfo = info;
@@ -65,7 +65,7 @@ public class TalismanClient : MonoBehaviour
                 playerInfo = info;
             }
         }
-        if(playerInfo == null)
+        if (playerInfo == null)
         {
             Debug.LogError("Wrong playerID");
             return;
@@ -83,16 +83,29 @@ public class TalismanClient : MonoBehaviour
 
         //ClientHandleNetworkData.onServerRespond_1 += OnPlayerTurn;
         ClientTCP.SendObject(ClientPackets.CCharacterAccepted);
+        ClientHandleNetworkData.onServerRespond_1 += OnRollResult;
     }
 
     public static void OnPlayerTurn(TalismanPlayerInfo playerInfo)
     {
         Debug.Log("Player " + playerInfo.inRoomID + " turn ");
-
+        if (PlayerController.players.TryGetValue(playerInfo, out PlayerController player))
+        {
+            CameraController.LookAt(player.transform.position);
+            PlayerUIController.ActivateRoll(true);
+        }
+        else { Debug.LogError("No such player"); }
 
     }
+
+    private static void OnRollResult(ServerPackets packetID, object obj)
+    {
+        throw new NotImplementedException();
+    }
+
     public static void Roll()
     {
-
+        PlayerUIController.EnableRoll(false);
+        ClientTCP.SendObject(ClientPackets.CRoll)
     }
 }
