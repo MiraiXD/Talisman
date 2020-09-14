@@ -45,7 +45,7 @@ class ClientHandleNetworkData : MonoBehaviour
     private static void HandleCharacterAssignment(byte[] data)
     {
         TalismanPlayerInfo[] infos = ClientTCP.GetData<TalismanPlayerInfo[]>(data);
-        ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, infos); });
+        ThreadSynchronizer.SyncTask(() => { TalismanClient.CharacterAssignment(infos); }); //onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, infos); });
     }
 
     private static void HandleRequestResult(byte[] data)

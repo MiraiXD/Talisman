@@ -40,20 +40,20 @@ public class TalismanClient : MonoBehaviour
     }
     public static void GameReady()
     {
-        ClientHandleNetworkData.onServerRespond_1 += CharacterAssignment;
+        //ClientHandleNetworkData.onServerRespond_1 += CharacterAssignment;
         ClientTCP.SendObject(ClientPackets.CGameReady);
     }
-    private static void CharacterAssignment(ServerPackets packetID, object obj)
+    public static void CharacterAssignment(TalismanPlayerInfo[] playerInfos)
     {
-        if (packetID != ServerPackets.SCharacterAssignment) return;
-        TalismanPlayerInfo[] playerInfos;
-        try
-        {
-            playerInfos = (TalismanPlayerInfo[])obj;
-        }
-        catch { return; }
+        //if (packetID != ServerPackets.SCharacterAssignment) return;
+        //TalismanPlayerInfo[] playerInfos;
+        //try
+        //{
+        //    playerInfos = (TalismanPlayerInfo[])obj;
+        //}
+        //catch { return; }
 
-        ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
+        //ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
 
 
         foreach (TalismanPlayerInfo info in playerInfos)
