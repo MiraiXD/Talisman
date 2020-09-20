@@ -42,8 +42,9 @@ public class Map : MonoBehaviour ,ISerializationCallbackReceiver
 
         PlayerSpot playerSpot = null;
         for (int i = 0; i < 100; i++) // while loop crashes unity - stinks
-        {
-            foreach (PlayerSpot spot in mapTiles[currentTile.id].playerSpots)
+        {            
+            if(!mapTiles.TryGetValue(currentTile.id, out MapTile tile)) { Debug.LogError("STINKS"); return null; }
+            foreach (PlayerSpot spot in tile.playerSpots)
             {
                 if (spot.occupied) continue;
                 else { playerSpot = spot; break; }

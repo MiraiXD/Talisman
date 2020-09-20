@@ -6,16 +6,16 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public static Dictionary<TalismanPlayerInfo, PlayerController> players = new Dictionary<TalismanPlayerInfo, PlayerController>();
-    private TalismanPlayerInfo _playerInfo;
-    public TalismanPlayerInfo playerInfo
+    public static Dictionary<PlayerInfo, PlayerController> players { get; } = new Dictionary<PlayerInfo, PlayerController>();
+    private PlayerInfo _playerInfo;
+    public PlayerInfo playerInfo
     {
         get { return _playerInfo; }
         set
         {
             _playerInfo = value;
-            if (players.ContainsKey(_playerInfo)) players.Remove(_playerInfo);
-            players.Add(_playerInfo, this);
+            if (players.ContainsKey(_playerInfo) || _playerInfo == null) players.Remove(_playerInfo);
+            if(_playerInfo != null) players.Add(_playerInfo, this);
         }
     }
     private CharacterModel model;

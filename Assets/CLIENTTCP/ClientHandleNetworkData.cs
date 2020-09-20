@@ -25,15 +25,30 @@ class ClientHandleNetworkData : MonoBehaviour
             //{ (int)ServerPackets.SReplyRoomsList, HandleRoomsList},
             { (int)ServerPackets.SRequestResult, HandleRequestResult},
             { (int)ServerPackets.SMapInfo, HandleCheckMap},
-            { (int)ServerPackets.SCharacterAssignment, HandleCharacterAssignment},
+            { (int)ServerPackets.SChooseYourCharacter, HandleChooseYourCharacter},
+            { (int)ServerPackets.SRandomCharacter, HandleRandomCharacter},
+            { (int)ServerPackets.SCharactersAssigned, HandleCharactersAssigned},
             { (int)ServerPackets.PlayerTurn, HandlePlayerTurn},
             };
     }
 
+    private static void HandleCharactersAssigned(byte[] data)
+    {
+        //ServerResponds.CharactersAssigned charactersAssigned = ClientTCP.GetData<ServerResponds.CharactersAssigned>(data);
+        ServerResponds.CharactersAssigned charactersAssigned = ClientTCP.GetData<ServerResponds.CharactersAssigned>(data);        
+        ThreadSynchronizer.SyncTask(() => { TalismanClient.CharactersAssigned(charactersAssigned); });
+    }
+
+    private static void HandleRandomCharacter(byte[] data)
+    {
+        ServerResponds.RandomCharacterResult result = ClientTCP.GetData<ServerResponds.RandomCharacterResult>(data);
+        ThreadSynchronizer.SyncTask(()=> { CharacterUIController.RandomCharacterArrived(result); } );
+    }
+
     private static void HandlePlayerTurn(byte[] data)
     {
-        TalismanPlayerInfo playerInfo = ClientTCP.GetData<TalismanPlayerInfo>(data);
-        ThreadSynchronizer.SyncTask(() => { TalismanClient.OnPlayerTurn(playerInfo); });
+        PlayerInfo playerInfo = ClientTCP.GetData<PlayerInfo>(data);
+        ThreadSynchronizer.SyncTask(() => { TalismanClient.PlayerTurn(playerInfo); });
     }
 
     private static void HandleCheckMap(byte[] data)
@@ -42,10 +57,10 @@ class ClientHandleNetworkData : MonoBehaviour
         ThreadSynchronizer.SyncTask(() => { onServerRespond_1?.Invoke(ServerPackets.SMapInfo, mapInfo); });
     }
 
-    private static void HandleCharacterAssignment(byte[] data)
+    private static void HandleChooseYourCharacter(byte[] data)
     {
-        TalismanPlayerInfo[] infos = ClientTCP.GetData<TalismanPlayerInfo[]>(data);
-        ThreadSynchronizer.SyncTask(() => { TalismanClient.CharacterAssignment(infos); }); //onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, infos); });
+        TalismanPlayerInfo info = ClientTCP.GetData<TalismanPlayerInfo>(data);        
+        ThreadSynchronizer.SyncTask(() => { TalismanClient.ChooseYourCharacter(info); }); //onServerRespond_1?.Invoke(ServerPackets.SCharacterAssignment, infos); });
     }
 
     private static void HandleRequestResult(byte[] data)

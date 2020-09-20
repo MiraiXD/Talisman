@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using ComNet;
 using System;
+using System.Collections.Generic;
 
 public class TalismanClient : MonoBehaviour
 {
-    public static TalismanPlayerInfo playerInfo;
+    public static TalismanPlayerInfo talismanPlayerInfo;
     void Start()
     {
         if (ClientTCP.playerInfo == null) { Debug.LogError("PLayerInfo uninitialized!"); return; }
@@ -43,8 +44,10 @@ public class TalismanClient : MonoBehaviour
         //ClientHandleNetworkData.onServerRespond_1 += CharacterAssignment;
         ClientTCP.SendObject(ClientPackets.CGameReady);
     }
-    public static void CharacterAssignment(TalismanPlayerInfo[] playerInfos)
+    public static void ChooseYourCharacter(TalismanPlayerInfo info)
     {
+        talismanPlayerInfo = info;
+        CharacterUIController.Enable();
         //if (packetID != ServerPackets.SCharacterAssignment) return;
         //TalismanPlayerInfo[] playerInfos;
         //try
@@ -56,37 +59,46 @@ public class TalismanClient : MonoBehaviour
         //ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
 
 
-        foreach (TalismanPlayerInfo info in playerInfos)
-        {
-            CharacterModel model = CharacterModelController.SpawnModel(info.characterInfo);
-            model.GetComponent<PlayerController>().playerInfo = info;
-            if (info.inRoomID == ClientTCP.playerInfo.inRoomID)
-            {
-                playerInfo = info;
-            }
-        }
-        if (playerInfo == null)
-        {
-            Debug.LogError("Wrong playerID");
-            return;
-        }
-        //show the player the character he's been given
-        CharacterUIController.ShowCard(playerInfo.characterInfo);
-        CharacterUIController.onOKPressed += OnCharacterAccepted;
-        //CharacterUIController.onCardShownOrHidden += OnCardHidden;
-        //GameUIController.ShowCharacterCard(characterInfo);        
+        //foreach (TalismanPlayerInfo info in playerInfos)
+        //{
+        //    CharacterModel model = CharacterModelController.SpawnModel(info.characterInfo);
+        //    model.GetComponent<PlayerController>().playerInfo = info;
+        //    if (info.inRoomID == ClientTCP.playerInfo.inRoomID)
+        //    {
+        //        playerInfo = info;
+        //    }
+        //}
+        //if (playerInfo == null)
+        //{
+        //    Debug.LogError("Wrong playerID");
+        //    return;
+        //}
+        ////show the player the character he's been given
+        //CharacterUIController.ShowCard(playerInfo.characterInfo);
+        //CharacterUIController.onOKPressed += OnCharacterAccepted;
+        ////CharacterUIController.onCardShownOrHidden += OnCardHidden;
+        ////GameUIController.ShowCharacterCard(characterInfo);        
     }
 
-    private static void OnCharacterAccepted()
+    public static void CharactersAssigned(ServerResponds.CharactersAssigned charactersAssigned)
     {
-        CharacterUIController.onOKPressed -= OnCharacterAccepted;
-
-        //ClientHandleNetworkData.onServerRespond_1 += OnPlayerTurn;
-        ClientTCP.SendObject(ClientPackets.CCharacterAccepted);
-        ClientHandleNetworkData.onServerRespond_1 += OnRollResult;
+        for (int i = 0; i < charactersAssigned.playerInfos.Count; i++)
+        {
+            CharacterModel model = CharacterModelController.SpawnModel(charactersAssigned.characterInfos[i]);
+            model.GetComponent<PlayerController>().playerInfo = charactersAssigned.playerInfos[i];
+        }        
     }
 
-    public static void OnPlayerTurn(TalismanPlayerInfo playerInfo)
+    //private static void OnCharacterAccepted()
+    //{
+    //    CharacterUIController.onOKPressed -= OnCharacterAccepted;
+
+    //    //ClientHandleNetworkData.onServerRespond_1 += OnPlayerTurn;
+    //    ClientTCP.SendObject(ClientPackets.CCharacterAcceptedAndReadyToPlay);
+    //    ClientHandleNetworkData.onServerRespond_1 += OnRollResult;
+    //}
+
+    public static void PlayerTurn(PlayerInfo playerInfo)
     {
         Debug.Log("Player " + playerInfo.inRoomID + " turn ");
         if (PlayerController.players.TryGetValue(playerInfo, out PlayerController player))
@@ -106,6 +118,6 @@ public class TalismanClient : MonoBehaviour
     public static void Roll()
     {
         PlayerUIController.EnableRoll(false);
-        ClientTCP.SendObject(ClientPackets.CRoll)
+        ClientTCP.SendObject(ClientPackets.CRoll);
     }
 }

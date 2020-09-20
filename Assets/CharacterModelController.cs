@@ -7,11 +7,14 @@ public class CharacterModelController : MonoBehaviour, ISerializationCallbackRec
 {
     [SerializeField] private CharacterModel[] _allModels;
     private static CharacterModel[] allModels;
+    private static Transform modelsParent;
+    private void Start()
+    {
+        modelsParent = transform;
+    }
 
     public static CharacterModel SpawnModel(ComNet.CharacterInfo characterInfo)
-    {
-        CharacterModelController parent = FindObjectOfType<CharacterModelController>();
-
+    {        
         foreach(CharacterModel model in allModels)
         {
             if(model.character == characterInfo.character)
@@ -28,7 +31,7 @@ public class CharacterModelController : MonoBehaviour, ISerializationCallbackRec
                 }
                 if (spot == null) { Debug.LogError("Could not find a spot!"); return null; }
 
-                CharacterModel newModel = Instantiate(model, parent.transform);
+                CharacterModel newModel = Instantiate(model, modelsParent.transform);
                 newModel.Init();
                 newModel.transform.position = CharacterModel.GetPositionOnMapTile(spot.transform.position);
                 return newModel;

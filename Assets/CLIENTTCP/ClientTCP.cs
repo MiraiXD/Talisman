@@ -141,10 +141,10 @@ public class ClientTCP : MonoBehaviour
         T obj = default;
         try
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+            //JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
             obj = JsonConvert.DeserializeObject<T>(msg, settings);
         }
-        catch (Exception e) { ThreadSynchronizer.SyncTask(() => { Debug.LogException(e); }); }
+        catch (Exception e) { ThreadSynchronizer.SyncTask(() => { Debug.Log(msg); Debug.LogException(e); }); }
         return obj;
     }
 }
