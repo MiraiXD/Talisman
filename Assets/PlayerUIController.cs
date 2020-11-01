@@ -2,41 +2,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using ComNet;
 public class PlayerUIController : MonoBehaviour, ISerializationCallbackReceiver
 {
-    private static Button rollButton;
-    private static Text rollText;
-    [SerializeField] private Button _rollButton;
-    [SerializeField] private Text _rollText;
+    private static Button rollButton;    
+    [SerializeField] private Button _rollButton;    
 
     private void Start()
     {
         rollButton.onClick.AddListener(Roll);
     }
-    public static void ActivateRoll(bool active)
+    public static void Enable()
     {
-        rollButton.gameObject.SetActive(active);
-        rollText.gameObject.SetActive(active);
-        rollText.text = "Roll";
-        EnableRoll(active);
+        rollButton.gameObject.SetActive(true);
+        rollButton.interactable = true;
     }
-    public static void EnableRoll(bool enable)
+    public static void Disable()
     {
-        rollButton.interactable = enable;
+        rollButton.gameObject.SetActive(false);
     }
+    public static void RollResult(RollInfo rollInfo)
+    {
+        Debug.Log("Rolled: " + rollInfo.rollResult);
+
+    }
+    //public static void ActivateRoll(bool active)
+    //{
+    //    rollButton.gameObject.SetActive(active);                
+    //    EnableRoll(active);
+    //}
+    //public static void EnableRoll(bool enable)
+    //{
+    //    rollButton.interactable = enable;
+    //}
     private static void Roll()
     {
-        TalismanClient.Roll();
-    }
-
+        ClientTCP.SendObject(ClientPackets.CRoll);
+        rollButton.interactable = false;
+    }    
     public void OnBeforeSerialize()
     {        
     }
 
     public void OnAfterDeserialize()
     {
-        rollButton = _rollButton;
-        rollText = _rollText;
+        rollButton = _rollButton;        
     }
 }

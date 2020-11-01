@@ -29,7 +29,14 @@ class ClientHandleNetworkData : MonoBehaviour
             { (int)ServerPackets.SRandomCharacter, HandleRandomCharacter},
             { (int)ServerPackets.SCharactersAssigned, HandleCharactersAssigned},
             { (int)ServerPackets.PlayerTurn, HandlePlayerTurn},
+            { (int)ServerPackets.SRollInfo, HandleRoll},
             };
+    }
+
+    private static void HandleRoll(byte[] data)
+    {
+        RollInfo rollInfo = ClientTCP.GetData<RollInfo>(data);
+        ThreadSynchronizer.SyncTask(() => { TalismanClient.RollResult(rollInfo); });
     }
 
     private static void HandleCharactersAssigned(byte[] data)

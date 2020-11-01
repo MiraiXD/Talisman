@@ -47,37 +47,7 @@ public class TalismanClient : MonoBehaviour
     public static void ChooseYourCharacter(TalismanPlayerInfo info)
     {
         talismanPlayerInfo = info;
-        CharacterUIController.Enable();
-        //if (packetID != ServerPackets.SCharacterAssignment) return;
-        //TalismanPlayerInfo[] playerInfos;
-        //try
-        //{
-        //    playerInfos = (TalismanPlayerInfo[])obj;
-        //}
-        //catch { return; }
-
-        //ClientHandleNetworkData.onServerRespond_1 -= CharacterAssignment;
-
-
-        //foreach (TalismanPlayerInfo info in playerInfos)
-        //{
-        //    CharacterModel model = CharacterModelController.SpawnModel(info.characterInfo);
-        //    model.GetComponent<PlayerController>().playerInfo = info;
-        //    if (info.inRoomID == ClientTCP.playerInfo.inRoomID)
-        //    {
-        //        playerInfo = info;
-        //    }
-        //}
-        //if (playerInfo == null)
-        //{
-        //    Debug.LogError("Wrong playerID");
-        //    return;
-        //}
-        ////show the player the character he's been given
-        //CharacterUIController.ShowCard(playerInfo.characterInfo);
-        //CharacterUIController.onOKPressed += OnCharacterAccepted;
-        ////CharacterUIController.onCardShownOrHidden += OnCardHidden;
-        ////GameUIController.ShowCharacterCard(characterInfo);        
+        CharacterUIController.Enable();               
     }
 
     public static void CharactersAssigned(ServerResponds.CharactersAssigned charactersAssigned)
@@ -89,35 +59,30 @@ public class TalismanClient : MonoBehaviour
         }        
     }
 
-    //private static void OnCharacterAccepted()
-    //{
-    //    CharacterUIController.onOKPressed -= OnCharacterAccepted;
-
-    //    //ClientHandleNetworkData.onServerRespond_1 += OnPlayerTurn;
-    //    ClientTCP.SendObject(ClientPackets.CCharacterAcceptedAndReadyToPlay);
-    //    ClientHandleNetworkData.onServerRespond_1 += OnRollResult;
-    //}
-
     public static void PlayerTurn(PlayerInfo playerInfo)
     {
         Debug.Log("Player " + playerInfo.inRoomID + " turn ");
-        if (PlayerController.players.TryGetValue(playerInfo, out PlayerController player))
+        if (PlayerController.players.TryGetValue(playerInfo.inRoomID, out PlayerController player))
         {
-            CameraController.LookAt(player.transform.position);
-            PlayerUIController.ActivateRoll(true);
+            CharacterUIController.Disable();
+            CameraController.LookAt(player.transform);
+            PlayerUIController.Enable();
         }
         else { Debug.LogError("No such player"); }
 
     }
-
-    private static void OnRollResult(ServerPackets packetID, object obj)
+    public static void RollResult(RollInfo rollInfo)
     {
-        throw new NotImplementedException();
+        PlayerUIController.RollResult(rollInfo);
     }
+    //private static void OnRollResult(ServerPackets packetID, object obj)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
-    public static void Roll()
-    {
-        PlayerUIController.EnableRoll(false);
-        ClientTCP.SendObject(ClientPackets.CRoll);
-    }
+    //public static void Roll()
+    //{
+    //    PlayerUIController.EnableRoll(false);
+    //    ClientTCP.SendObject(ClientPackets.CRoll);
+    //}
 }

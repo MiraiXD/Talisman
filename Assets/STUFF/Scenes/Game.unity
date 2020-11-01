@@ -3936,7 +3936,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1651285870}
-  - {fileID: 1244612787}
   m_Father: {fileID: 2026452223}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3958,7 +3957,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rollButton: {fileID: 1651285871}
-  _rollText: {fileID: 1244612788}
 --- !u!1001 &288166489
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18564,7 +18562,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1244612787
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18576,13 +18574,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 284532754}
+  m_Father: {fileID: 1651285870}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 352.805, y: 0}
-  m_SizeDelta: {x: -705.61, y: 82.2}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 82.2}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1244612788
 MonoBehaviour:
@@ -18615,7 +18613,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Roll
+  m_Text: "Rzut ko\u015Bci\u0105"
 --- !u!222 &1244612789
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23922,7 +23920,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1651285870
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23935,6 +23933,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1000657673}
+  - {fileID: 1244612787}
   m_Father: {fileID: 284532754}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -24881,9 +24880,9 @@ GameObject:
   - component: {fileID: 1687258585}
   - component: {fileID: 1687258584}
   - component: {fileID: 1687258582}
-  - component: {fileID: 1687258583}
   - component: {fileID: 1687258586}
   - component: {fileID: 1687258587}
+  - component: {fileID: 1687258583}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -24989,13 +24988,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: 0.25213528, y: -0.30344462, z: 0.08343807, w: 0.9150887}
-  m_LocalPosition: {x: -52.23738, y: 8.8307495, z: -7.9701385}
+  m_LocalRotation: {x: 0.037475266, y: 0.95435834, z: -0.2629241, w: 0.13662611}
+  m_LocalPosition: {x: -23.79, y: 8.8307495, z: -7.9701385}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 20.160002, y: 195.14299, z: 0.064}
+  m_LocalEulerAnglesHint: {x: 30.803001, y: 163.7, z: -0.021000002}
 --- !u!114 &1687258586
 MonoBehaviour:
   m_ObjectHideFlags: 0
